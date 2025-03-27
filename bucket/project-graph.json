@@ -9,7 +9,7 @@
       "bin": "project-graph.exe",
       "shortcuts": [
         [
-          "project-graph.exe", 
+          "project-graph.exe",
           "Project Graph"
         ]
       ],
