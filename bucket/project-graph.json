@@ -4,13 +4,12 @@
   "homepage": "https://project-graph.top",
   "license": "MIT",
   "url": "https://github.com/LiRenTech/project-graph/releases/download/v1.4.11/Project.Graph_1.4.11_x64-setup.exe",
-  "hash": "42ab5cde81e5844cc3b4582767a4ec67b12fa3bd76ec6b7f3a53c8c07c401b4c",
   "architecture": {
     "64bit": {
       "bin": "project-graph.exe",
       "shortcuts": [
         [
-          "project-graph.exe",
+          "project-graph.exe", 
           "Project Graph"
         ]
       ],
