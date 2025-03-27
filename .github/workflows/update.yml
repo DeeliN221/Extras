@@ -1,0 +1,45 @@
+name: Auto-Update Scoop Manifest
+on:
+  schedule:
+    - cron: "0 0 * * *"
+  workflow_dispatch:
+
+jobs:
+  update:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Setup Scoop and Dependencies
+        run: |
+          Invoke-WebRequest -Uri https://get.scoop.sh -OutFile install.ps1
+          .\install.ps1 -RunAsAdmin
+          scoop install checkver
+
+      - name: Run Update Script
+        run: |
+          cd bucket
+          pwsh ../scripts/update.ps1
+        continue-on-error: true 
+
+      - name: Create Pull Request (If Changes)
+        if: success() || failure() 
+        uses: peter-evans/create-pull-request@v5
+        with:
+          title: "Update project-graph to latest version"
+          branch: "auto-update-project-graph"
+          commit-message: "Update project-graph manifest"
+          labels: "automated"
+          delete-branch: true
+
+      - name: Notify on Failure
+        if: failure() 
+        uses: actions/github-script@v6
+        with:
+          script: |
+            await github.rest.issues.createComment({
+              issue_number: context.payload.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: "⚠️ Automated update failed for project-graph. Please check the logs."
+            })
