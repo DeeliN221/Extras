@@ -1,48 +1,49 @@
-name: Tests
-
+name: Auto-Update Scoop Manifest
 on:
-  pull_request:
-  push:
+  schedule:
+    - cron: "0 0 * * *"
   workflow_dispatch:
 
 jobs:
-  test_powershell:
-    name: WindowsPowerShell
+  update:
     runs-on: windows-latest
     steps:
-      - name: Checkout Bucket
-        uses: actions/checkout@main
-        with:
-          fetch-depth: 2
-          path: 'my_bucket'
-      - name: Checkout Scoop
-        uses: actions/checkout@main
-        with:
-          repository: ScoopInstaller/Scoop
-          path: 'scoop_core'
-      - name: Init and Test
-        shell: powershell
+      - uses: actions/checkout@v4
+      
+      - name: Setup Scoop and Dependencies
         run: |
-          $env:SCOOP_HOME="$(Convert-Path '.\scoop_core')"
-          .\scoop_core\test\bin\init.ps1
-          .\my_bucket\bin\test.ps1
-  test_pwsh:
-    name: PowerShell
-    runs-on: windows-latest
-    steps:
-      - name: Checkout Bucket
-        uses: actions/checkout@main
-        with:
-          fetch-depth: 2
-          path: 'my_bucket'
-      - name: Checkout Scoop
-        uses: actions/checkout@main
-        with:
-          repository: ScoopInstaller/Scoop
-          path: 'scoop_core'
-      - name: Init and Test
-        shell: pwsh
+          Invoke-WebRequest -Uri https://get.scoop.sh -OutFile install.ps1
+          .\install.ps1 -RunAsAdmin
+          scoop install checkver
+
+      - name: Remove Trailing Whitespace
         run: |
-          $env:SCOOP_HOME="$(Convert-Path '.\scoop_core')"
-          .\scoop_core\test\bin\init.ps1
-          .\my_bucket\bin\test.ps1
+          git ls-files | grep -v '\.git' | xargs sed -i 's/[ \t]*$//'
+
+      - name: Run Update Script
+        run: |
+          cd bucket
+          pwsh ../scripts/update.ps1
+        continue-on-error: true
+
+      - name: Create Pull Request (If Changes)
+        if: success() || failure()
+        uses: peter-evans/create-pull-request@v5
+        with:
+          title: "Update project-graph to latest version"
+          branch: "auto-update-project-graph"
+          commit-message: "Update project-graph manifest"
+          labels: "automated"
+          delete-branch: true
+
+      - name: Notify on Failure
+        if: failure()
+        uses: actions/github-script@v6
+        with:
+          script: |
+            await github.rest.issues.createComment({
+              issue_number: context.payload.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: "⚠️ Automated update failed for project-graph. Please check the logs."
+            })
