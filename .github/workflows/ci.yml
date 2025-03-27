@@ -16,10 +16,6 @@ jobs:
           .\install.ps1 -RunAsAdmin
           scoop install checkver
 
-      - name: Remove Trailing Whitespace
-        run: |
-          git ls-files | grep -v '\.git' | xargs sed -i 's/[ \t]*$//'
-
       - name: Run Update Script
         run: |
           cd bucket
