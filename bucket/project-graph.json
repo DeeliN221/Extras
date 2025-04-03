@@ -14,11 +14,13 @@
                 ]
             ],
             "installer": {
-                "script": "Start-Process -FilePath \"$dir\\Project.Graph_1.4.36_x64-setup.exe\" -ArgumentList \"/S /D=$dir\" -Wait"
+                "$exeFile = Get-ChildItem -Path $dir -Filter 'Project.Graph_*_x64-setup.exe' | Select-Object -ExpandProperty FullName -First 1",
+                "Start-Process -FilePath $exeFile -ArgumentList '/S /D=$dir' -Wait"
             },
             "uninstaller": {
                 "script": [
-                    "Start-Process -FilePath \"$dir\\Project.Graph_1.4.35_x64-setup.exe\" -ArgumentList \"/S\" -Wait",
+                    "$exeFile = Get-ChildItem -Path $dir -Filter 'Project.Graph_*_x64-setup.exe' | Select-Object -ExpandProperty FullName -First 1",
+                    "Start-Process -FilePath $exeFile -ArgumentList '/S' -Wait",
                     "Remove-Item \"$env:USERPROFILE\\Desktop\\Project Graph.lnk\" -ErrorAction SilentlyContinue",
                     "Remove-Item \"$env:APPDATA\\Microsoft\\Windows\\Start Menu\\Programs\\Project Graph.lnk\" -ErrorAction SilentlyContinue"
                 ]
