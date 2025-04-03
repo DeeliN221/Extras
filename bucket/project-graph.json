@@ -18,6 +18,7 @@
                     "$exeFile = Get-ChildItem -Path $dir -Filter 'Project.Graph_*_x64-setup.exe' | Select-Object -ExpandProperty FullName -First 1",
                     "Start-Process -FilePath $exeFile -ArgumentList '/S /D=$dir' -Wait"
                 ]
+            },
             "uninstaller": {
                 "script": [
                     "$exeFile = Get-ChildItem -Path $dir -Filter 'Project.Graph_*_x64-setup.exe' | Select-Object -ExpandProperty FullName -First 1",
