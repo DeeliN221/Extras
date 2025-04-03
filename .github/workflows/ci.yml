@@ -27,12 +27,18 @@ jobs:
         run: |
           DOWNLOAD_URL="https://github.com/LiRenTech/project-graph/releases/download/v${{ steps.version-check.outputs.latest_version }}/Project.Graph_${{ steps.version-check.outputs.latest_version }}_x64-setup.exe"
           HASH=$(curl -L $DOWNLOAD_URL | sha256sum | cut -d' ' -f1)
-
-          jq --arg ver "${{ steps.version-check.outputs.latest_version }}" --arg hash "$HASH" '
+          CURRENT_VER="${{ steps.version-check.outputs.current_version }}"
+          LATEST_VER="${{ steps.version-check.outputs.latest_version }}"
+      
+          jq --arg ver "$LATEST_VER" --arg current_ver "$CURRENT_VER" --arg hash "$HASH" '
             .version = $ver |
             .hash = $hash |
             .url = "https://github.com/LiRenTech/project-graph/releases/download/v\($ver)/Project.Graph_\($ver)_x64-setup.exe" |
-            .architecture."64bit".installer.script |= (if . then gsub("1\\.4\\.35"; $ver) else . end)
+            (.architecture."64bit".installer.script, .architecture."64bit".uninstaller.script) |= (
+              if . then 
+                gsub($current_ver; $ver)
+              else . end
+            )
           ' bucket/project-graph.json > tmp.json && mv tmp.json bucket/project-graph.json
 
       - name: Commit changes
