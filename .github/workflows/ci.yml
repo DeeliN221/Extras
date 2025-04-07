@@ -21,6 +21,7 @@ jobs:
           CURRENT_VER=$(jq -r '.version' bucket/project-graph.json)
           echo "latest_version=$LATEST_VER" >> $GITHUB_OUTPUT
           echo "current_version=$CURRENT_VER" >> $GITHUB_OUTPUT
+          echo "$CURRENT_VER -> $LATEST_VER"
           
       - name: Update manifest
         if: steps.version-check.outputs.current_version != steps.version-check.outputs.latest_version
