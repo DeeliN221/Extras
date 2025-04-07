@@ -35,10 +35,8 @@ jobs:
             .version = $ver |
             .hash = $hash |
             .url = "https://github.com/LiRenTech/project-graph/releases/download/v\($ver)/Project.Graph_\($ver)_x64-setup.exe" |
-            (.architecture."64bit".installer.script, .architecture."64bit".uninstaller.script) |= (
-              if . then 
-                gsub($current_ver; $ver)
-              else . end
+            (.architecture."64bit".installer.script[], .architecture."64bit".uninstaller.script[]) |= (
+              gsub($current_ver; $ver)
             )
           ' bucket/project-graph.json > tmp.json && mv tmp.json bucket/project-graph.json
 
