@@ -108,9 +108,11 @@ jobs:
 
       - name: Test project-graph
         run: |
-          $(where scoop) install bucket\project-graph.json
+          scoop_exe = $(where scoop)
+          echo $scoop_exe
+          $scoop_exe install bucket\project-graph.json
           project-graph -h
-          $(where scoop) uninstall project-graph
+          $scoop_exe uninstall project-graph
 
       - name: Test pixi
         run: |
