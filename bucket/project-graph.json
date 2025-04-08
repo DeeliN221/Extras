@@ -1,40 +1,40 @@
 {
-    "version": "1.4.41",
-    "description": "Draw fast, think efficiently. | A simple tool for drawing graphs.",
-    "homepage": "https://project-graph.top",
-    "license": "MIT",
-    "url": "https://github.com/LiRenTech/project-graph/releases/download/v1.4.41/Project.Graph_1.4.41_x64-setup.exe",
-    "architecture": {
-        "64bit": {
-            "bin": "project-graph.exe",
-            "shortcuts": [
-                [
-                    "project-graph.exe",
-                    "Project Graph"
-                ]
-            ],
-            "installer": {
-                "script": [
-                    "$exeFile = Get-ChildItem -Path $dir -Filter 'Project.Graph_*_x64-setup.exe' | Select-Object -ExpandProperty FullName -First 1",
-                    "Start-Process -FilePath $exeFile -ArgumentList '/S', \"/D=$dir\" -Wait"
-                ]
-            },
-            "uninstaller": {
-                "script": [
-                    "$exeFile = Get-ChildItem -Path $dir -Filter 'uninstall.exe' | Select-Object -ExpandProperty FullName -First 1",
-                    "Start-Process -FilePath $exeFile -ArgumentList '/S' -Wait",
-                    "Remove-Item \"$env:USERPROFILE\\Desktop\\Project Graph.lnk\" -ErrorAction SilentlyContinue",
-                    "Remove-Item \"$env:APPDATA\\Microsoft\\Windows\\Start Menu\\Programs\\Project Graph.lnk\" -ErrorAction SilentlyContinue"
-                ]
-            }
-        }
-    },
-    "checkver": {
-        "url": "https://github.com/LiRenTech/project-graph/releases",
-        "regex": "Release\\ v([\\d.]+)"
-    },
-    "autoupdate": {
-        "url": "https://github.com/LiRenTech/project-graph/releases/download/v$version/Project.Graph_$version_x64-setup.exe"
-    },
-    "hash": "a130fb66fc62556598c5cc64814d9a11807d236262d8311140a34097ee71f5dc"
+  "version": "1.5.0",
+  "description": "Draw fast, think efficiently. | A simple tool for drawing graphs.",
+  "homepage": "https://project-graph.top",
+  "license": "MIT",
+  "url": "https://github.com/LiRenTech/project-graph/releases/download/v1.5.0/Project.Graph_1.5.0_x64-setup.exe",
+  "architecture": {
+    "64bit": {
+      "bin": "project-graph.exe",
+      "shortcuts": [
+        [
+          "project-graph.exe",
+          "Project Graph"
+        ]
+      ],
+      "installer": {
+        "script": [
+          "$exeFile = Get-ChildItem -Path $dir -Filter 'Project.Graph_*_x64-setup.exe' | Select-Object -ExpandProperty FullName -First 1",
+          "Start-Process -FilePath $exeFile -ArgumentList '/S', \"/D=$dir\" -Wait"
+        ]
+      },
+      "uninstaller": {
+        "script": [
+          "$exeFile = Get-ChildItem -Path $dir -Filter 'uninstall.exe' | Select-Object -ExpandProperty FullName -First 1",
+          "Start-Process -FilePath $exeFile -ArgumentList '/S' -Wait",
+          "Remove-Item \"$env:USERPROFILE\\Desktop\\Project Graph.lnk\" -ErrorAction SilentlyContinue",
+          "Remove-Item \"$env:APPDATA\\Microsoft\\Windows\\Start Menu\\Programs\\Project Graph.lnk\" -ErrorAction SilentlyContinue"
+        ]
+      }
+    }
+  },
+  "checkver": {
+    "url": "https://github.com/LiRenTech/project-graph/releases",
+    "regex": "Release\\ v([\\d.]+)"
+  },
+  "autoupdate": {
+    "url": "https://github.com/LiRenTech/project-graph/releases/download/v$version/Project.Graph_$version_x64-setup.exe"
+  },
+  "hash": "f1af0b1d80253e65b1ae1e561f2af9dc1e811d149858a459bde58f86cb1fec69"
 }
