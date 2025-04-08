@@ -114,7 +114,19 @@ jobs:
           Write-Output "Scoop path: $(Get-Command scoop | Select-Object -ExpandProperty Source)"
 
           scoop install bucket\project-graph.json
-          project-graph -h
+          Start-Process project-graph -ArgumentList "-h" -Wait -NoNewWindow
+          $processName = "project-graph"
+          Get-Process -Name $processName -ErrorAction SilentlyContinue | Stop-Process -Force -PassThru | ForEach-Object {
+              Write-Output "Killed process: $($_.Id) $($_.Name)"
+          }
+          $retry = 0
+          while (Get-Process -Name $processName -ErrorAction SilentlyContinue) {
+              if ($retry -ge 3) {
+                  throw "Process still running after 3 retries"
+              }
+              Start-Sleep -Seconds 1
+              $retry++
+          }
           scoop uninstall project-graph
 
       - name: Test pixi
