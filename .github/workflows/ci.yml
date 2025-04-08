@@ -40,12 +40,6 @@ jobs:
             )
           ' bucket/project-graph.json > tmp.json && mv tmp.json bucket/project-graph.json
 
-      - name: Test project-graph
-        if: steps.version-check-pg.outputs.current_version != steps.version-check-pg.outputs.latest_version
-        run: |
-          project-graph -h
-          scoop uninstall project-graph
-
       - name: Commit changes for project-graph
         if: steps.version-check-pg.outputs.current_version != steps.version-check-pg.outputs.latest_version
         run: |
@@ -95,12 +89,6 @@ jobs:
             )
           ' bucket/pixi.json > tmp.json && mv tmp.json bucket/pixi.json
 
-      - name: Test pixi
-        if: steps.version-check-pixi.outputs.current_version != steps.version-check-pixi.outputs.latest_version
-        run: |
-          pixi -h
-          scoop uninstall pixi
-
       - name: Commit changes for pixi
         if: steps.version-check-pixi.outputs.current_version != steps.version-check-pixi.outputs.latest_version
         run: |
@@ -109,3 +97,23 @@ jobs:
           git add bucket/pixi.json
           git commit -m "chore: auto update pixi to ${{ steps.version-check.outputs.latest_version }}"
           git push
+
+  simple-test:
+    runs-on: windows-latest
+    steps:
+      - name: install scoop
+        run: |
+          Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
+          Invoke-RestMethod -Uri https://get.scoop.sh | Invoke-Expression
+
+      - name: Test project-graph
+        run: |
+          scoop install bucket\project-graph.json
+          project-graph -h
+          scoop uninstall project-graph
+
+      - name: Test pixi
+        run: |
+          scoop install bucket\pixi.json
+          pixi -h
+          scoop uninstall pixi
