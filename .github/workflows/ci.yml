@@ -106,27 +106,23 @@ jobs:
           Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
           Invoke-RestMethod -Uri https://get.scoop.sh | Invoke-Expression
 
-          . $PROFILE.CurrentUserAllHosts
-          Import-Module "$HOME/scoop/modules/scoop"
+          $scoopPath = "$env:USERPROFILE\scoop\shims"
+          $env:Path += ";$scoopPath"
+          Write-Output "Scoop path: $(Get-Command scoop | Select-Object -ExpandProperty Source)"
 
-          $scoop_exe = (Get-Command scoop).Path
-          Write-Output "Scoop path: $scoop_exe"
-
-          & $scoop_exe install bucket\project-graph
+          scoop install bucket\project-graph
           project-graph -h
-          & $scoop_exe uninstall project-graph
+          scoop uninstall project-graph
 
       - name: Test pixi
         run: |
           Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
           Invoke-RestMethod -Uri https://get.scoop.sh | Invoke-Expression
 
-          . $PROFILE.CurrentUserAllHosts
-          Import-Module "$HOME/scoop/modules/scoop"
+          $scoopPath = "$env:USERPROFILE\scoop\shims"
+          $env:Path += ";$scoopPath"
+          Write-Output "Scoop path: $(Get-Command scoop | Select-Object -ExpandProperty Source)"
 
-          $scoop_exe = (Get-Command scoop).Path
-          Write-Output "Scoop path: $scoop_exe"
-
-          & $scoop_exe install bucket\pixi.json
+          scoop install bucket\pixi.json
           pixi -h
-          & $scoop_exe uninstall pixi
+          scoop uninstall pixi
