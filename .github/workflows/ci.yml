@@ -110,7 +110,7 @@ jobs:
           $env:Path += ";$scoopPath"
           Write-Output "Scoop path: $(Get-Command scoop | Select-Object -ExpandProperty Source)"
 
-          scoop install bucket\project-graph
+          scoop install bucket\project-graph.json
           project-graph -h
           scoop uninstall project-graph
 
