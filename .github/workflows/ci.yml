@@ -40,6 +40,12 @@ jobs:
             )
           ' bucket/project-graph.json > tmp.json && mv tmp.json bucket/project-graph.json
 
+      - name: Test project-graph
+        if: steps.version-check-pg.outputs.current_version != steps.version-check-pg.outputs.latest_version
+        run: |
+          project-graph -h
+          scoop uninstall project-graph
+
       - name: Commit changes for project-graph
         if: steps.version-check-pg.outputs.current_version != steps.version-check-pg.outputs.latest_version
         run: |
@@ -88,6 +94,12 @@ jobs:
               gsub($current_ver; $ver)
             )
           ' bucket/pixi.json > tmp.json && mv tmp.json bucket/pixi.json
+
+      - name: Test pixi
+        if: steps.version-check-pixi.outputs.current_version != steps.version-check-pixi.outputs.latest_version
+        run: |
+          pixi -h
+          scoop uninstall pixi
 
       - name: Commit changes for pixi
         if: steps.version-check-pixi.outputs.current_version != steps.version-check-pixi.outputs.latest_version
