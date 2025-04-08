@@ -101,13 +101,14 @@ jobs:
   simple-test:
     runs-on: windows-latest
     steps:
-      - name: install scoop
+      - name: Test project-graph
         run: |
           Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
           Invoke-RestMethod -Uri https://get.scoop.sh | Invoke-Expression
 
-      - name: Test project-graph
-        run: |
+          . $PROFILE.CurrentUserAllHosts
+          Import-Module "$HOME/scoop/modules/scoop"
+
           $scoop_exe = (Get-Command scoop).Path
           Write-Output "Scoop path: $scoop_exe"
 
@@ -117,6 +118,12 @@ jobs:
 
       - name: Test pixi
         run: |
+          Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
+          Invoke-RestMethod -Uri https://get.scoop.sh | Invoke-Expression
+
+          . $PROFILE.CurrentUserAllHosts
+          Import-Module "$HOME/scoop/modules/scoop"
+
           $scoop_exe = (Get-Command scoop).Path
           Write-Output "Scoop path: $scoop_exe"
 
