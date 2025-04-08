@@ -105,16 +105,15 @@ jobs:
         run: |
           Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
           Invoke-RestMethod -Uri https://get.scoop.sh | Invoke-Expression
-          where scoop
 
       - name: Test project-graph
         run: |
-          scoop install bucket\project-graph.json
+          $(where scoop) install bucket\project-graph.json
           project-graph -h
-          scoop uninstall project-graph
+          $(where scoop) uninstall project-graph
 
       - name: Test pixi
         run: |
-          scoop install bucket\pixi.json
+          $(where scoop) install bucket\pixi.json
           pixi -h
-          scoop uninstall pixi
+          $(where scoop) uninstall pixi
