@@ -108,16 +108,18 @@ jobs:
 
       - name: Test project-graph
         run: |
-          scoop_exe = $where scoop
-          echo $scoop_exe
-          & $scoop_exe install bucket\project-graph.json
+          $scoop_exe = (Get-Command scoop).Path
+          Write-Output "Scoop path: $scoop_exe"
+
+          & $scoop_exe install bucket\project-graph
           project-graph -h
           & $scoop_exe uninstall project-graph
 
       - name: Test pixi
         run: |
-          scoop_exe = $where scoop
-          echo $scoop_exe
+          $scoop_exe = (Get-Command scoop).Path
+          Write-Output "Scoop path: $scoop_exe"
+
           & $scoop_exe install bucket\pixi.json
           pixi -h
           & $scoop_exe uninstall pixi
