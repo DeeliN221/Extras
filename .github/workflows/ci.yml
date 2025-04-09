@@ -15,7 +15,7 @@ jobs:
         run: sudo apt-get install -y jq
 
       - name: Get latest version of project-graph
-        id: version-check-pg
+        id: version-check
         run: |
           LATEST_VER=$(curl -s "https://api.github.com/repos/LiRenTech/project-graph/releases/latest" | jq -r '.tag_name | sub("^v"; "")')
           CURRENT_VER=$(jq -r '.version' bucket/project-graph.json)
@@ -24,7 +24,7 @@ jobs:
           echo "$CURRENT_VER -> $LATEST_VER"
 
       - name: Update manifest of project-graph
-        if: steps.version-check-pg.outputs.current_version != steps.version-check-pg.outputs.latest_version
+        if: steps.version-check.outputs.current_version != steps.version-check.outputs.latest_version
         run: |
           DOWNLOAD_URL="https://github.com/LiRenTech/project-graph/releases/download/v${{ steps.version-check.outputs.latest_version }}/Project.Graph_${{ steps.version-check.outputs.latest_version }}_x64-setup.exe"
           HASH=$(curl -L $DOWNLOAD_URL | sha256sum | cut -d' ' -f1)
@@ -40,20 +40,15 @@ jobs:
             )
           ' bucket/project-graph.json > tmp.json && mv tmp.json bucket/project-graph.json
 
-      - name: Commit changes for project-graph
-        if: steps.version-check-pg.outputs.current_version != steps.version-check-pg.outputs.latest_version
-        run: |
-          git config --global user.name "GitHub Actions"
-          git config --global user.email "actions@github.com"
-          git add bucket/project-graph.json
-          git commit -m "chore: auto update project-graph to ${{ steps.version-check.outputs.latest_version }}"
-          git push
-
   simple-test:
+    needs: check-update
     runs-on: windows-latest
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+        with:
+          ref: ${{ github.ref }}
+          fetch-depth: 0
 
       - name: Test project-graph
         run: |
@@ -66,3 +61,20 @@ jobs:
 
           scoop install bucket\project-graph.json
           scoop uninstall project-graph
+
+      - name: Create Pull Request
+        if: steps.version-check.outputs.current_version != steps.version-check.outputs.latest_version
+        uses: actions/create-pull-request@v5
+        with:
+          branch: "update/project-graph-${{ steps.version-check.outputs.latest_version }}"
+          title: "chore: update project-graph to ${{ steps.version-check.outputs.latest_version }}"
+          body: |
+            Auto-generated PR for version update
+            - Old version: ${{ steps.version-check.outputs.current_version }}
+            - New version: ${{ steps.version-check.outputs.latest_version }}
+          draft: true
+          labels: |
+            dependencies
+            needs-review
+          commit-message: "chore: auto update project-graph"
+          reviewers: DeeliN221
