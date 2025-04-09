@@ -1,9 +1,9 @@
 {
-  "version": "",
+  "version": "1.5.0",
   "description": "Draw fast, think efficiently. | A simple tool for drawing graphs.",
   "homepage": "https://project-graph.top",
   "license": "MIT",
-  "url": "https://github.com/LiRenTech/project-graph/releases/download/v/Project.Graph__x64-setup.exe",
+  "url": "https://github.com/LiRenTech/project-graph/releases/download/v1.5.0/Project.Graph_1.5.0_x64-setup.exe",
   "architecture": {
     "64bit": {
       "bin": "project-graph.exe",
@@ -36,5 +36,5 @@
   "autoupdate": {
     "url": "https://github.com/LiRenTech/project-graph/releases/download/v$version/Project.Graph_$version_x64-setup.exe"
   },
-  "hash": "0019dfc4b32d63c1392aa264aed2253c1e0c2fb09216f8e2cc269bbfb8bb49b5"
+  "hash": "f1af0b1d80253e65b1ae1e561f2af9dc1e811d149858a459bde58f86cb1fec69"
 }
