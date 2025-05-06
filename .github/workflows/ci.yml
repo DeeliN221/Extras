@@ -61,32 +61,22 @@ jobs:
       - name: Update manifest of pixi
         if: steps.version-check-pixi.outputs.current_version != steps.version-check-pixi.outputs.latest_version
         run: |
-          DOWNLOAD_URL="https://github.com/prefix-dev/pixi/releases/download/v${{ steps.version-check-pixi.outputs.latest_version }}/pixi-x86_64-pc-windows-msvc.zip"
-          HASH=$(curl -L $DOWNLOAD_URL | sha256sum | cut -d' ' -f1)
-          CURRENT_VER="${{ steps.version-check-pixi.outputs.current_version }}"
           LATEST_VER="${{ steps.version-check-pixi.outputs.latest_version }}"
-
-          jq --arg ver "$LATEST_VER" --arg current_ver "$CURRENT_VER" --arg hash "$HASH" '
+          
+          X86_URL="https://github.com/prefix-dev/pixi/releases/download/v$LATEST_VER/pixi-x86_64-pc-windows-msvc.zip"
+          X86_HASH=$(curl -L $X86_URL | sha256sum | cut -d' ' -f1)
+          
+          ARM64_URL="https://github.com/prefix-dev/pixi/releases/download/v$LATEST_VER/pixi-aarch64-pc-windows-msvc.zip"
+          ARM64_HASH=$(curl -L $ARM64_URL | sha256sum | cut -d' ' -f1)
+          
+          jq --arg ver "$LATEST_VER" \
+             --arg x86_hash "$X86_HASH" \
+             --arg arm64_hash "$ARM64_HASH" '
             .version = $ver |
-            .hash = $hash |
-            .url = "https://github.com/prefix-dev/pixi/releases/download/v\($ver)/pixi-x86_64-pc-windows-msvc.zip" |
-            (.architecture."64bit".installer.script[], .architecture."64bit".uninstaller.script[]) |= (
-              gsub($current_ver; $ver)
-            )
-          ' bucket/pixi.json > tmp.json && mv tmp.json bucket/pixi.json
-
-          DOWNLOAD_URL="https://github.com/prefix-dev/pixi/releases/download/v${{ steps.version-check-pixi.outputs.latest_version }}/pixi-aarch64-pc-windows-msvc.zip"
-          HASH=$(curl -L $DOWNLOAD_URL | sha256sum | cut -d' ' -f1)
-          CURRENT_VER="${{ steps.version-check-pixi.outputs.current_version }}"
-          LATEST_VER="${{ steps.version-check-pixi.outputs.latest_version }}"
-
-          jq --arg ver "$LATEST_VER" --arg current_ver "$CURRENT_VER" --arg hash "$HASH" '
-            .version = $ver |
-            .hash = $hash |
-            .url = "https://github.com/prefix-dev/pixi/releases/download/v\($ver)/pixi-aarch64-pc-windows-msvc.zip" |
-            (.architecture."arm64".installer.script[], .architecture."arm64".uninstaller.script[]) |= (
-              gsub($current_ver; $ver)
-            )
+            .architecture."64bit".url = "https://github.com/prefix-dev/pixi/releases/download/v\($ver)/pixi-x86_64-pc-windows-msvc.zip" |
+            .architecture."64bit".hash = $x86_hash |
+            .architecture."arm64".url = "https://github.com/prefix-dev/pixi/releases/download/v\($ver)/pixi-aarch64-pc-windows-msvc.zip" |
+            .architecture."arm64".hash = $arm64_hash
           ' bucket/pixi.json > tmp.json && mv tmp.json bucket/pixi.json
 
       - name: Commit changes for pixi
