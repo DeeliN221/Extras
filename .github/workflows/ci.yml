@@ -17,7 +17,7 @@ jobs:
       - name: Get latest version of project-graph
         id: version-check
         run: |
-          LATEST_VER=$(curl -s "https://api.github.com/repos/LiRenTech/project-graph/releases/latest" | jq -r '.tag_name | sub("^v"; "")')
+          LATEST_VER=$(curl -sL "https://api.github.com/repos/LiRenTech/project-graph/releases/latest" | jq -r 'if .tag_name then .tag_name | sub("^v"; "") else "" end')
           CURRENT_VER=$(jq -r '.version' bucket/project-graph.json)
           echo "latest_version=$LATEST_VER" >> $GITHUB_OUTPUT
           echo "current_version=$CURRENT_VER" >> $GITHUB_OUTPUT
